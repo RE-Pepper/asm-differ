@@ -1944,7 +1944,7 @@ class AsmProcessorARM32(AsmProcessor):
         return row
 
     def _normalize_bl(self, mnemonic: str, row: str) -> str:
-        if mnemonic != "bl":
+        if not mnemonic.startswith("b"):
             return row
 
         row, _ = split_off_address(row)
@@ -2005,7 +2005,7 @@ class AsmProcessorAArch64(AsmProcessor):
         return row
 
     def _normalize_bl(self, mnemonic: str, row: str) -> str:
-        if mnemonic != "bl":
+        if not mnemonic.startswith("b"):
             return row
 
         row, _ = split_off_address(row)
