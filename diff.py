@@ -54,7 +54,7 @@ if __name__ == "__main__":
     # Prefer to use diff_settings.py from the current working directory
     sys.path.insert(0, ".")
     try:
-        import diff_settings
+        from data import diff_settings
     except ModuleNotFoundError:
         fail("Unable to find diff_settings.py in the same directory.")
     sys.path.pop(0)
@@ -4237,6 +4237,7 @@ def debounced_fs_watch(
         file_targets: List[str] = []
         event_handler = WatchEventHandler(listenq, file_targets)
         observer = watchdog.observers.Observer()
+        observer.daemon = True
         observed = set()
         for target in targets:
             if os.path.isdir(target):
@@ -4509,6 +4510,7 @@ def main() -> None:
                 last_build = time.time()
                 if args.make:
                     display.progress("Building...")
+                    raise ReferenceError()
                     ret = run_make_capture_output(make_target, project)
                     if ret.returncode != 0:
                         display.update(
@@ -4519,6 +4521,9 @@ def main() -> None:
                         continue
                 mydump = run_objdump(mycmd, config, project)
                 display.update(mydump, error=False)
+        except ReferenceError:
+            display.terminate()
+            sys.exit(67)
         except KeyboardInterrupt:
             display.terminate()
 
